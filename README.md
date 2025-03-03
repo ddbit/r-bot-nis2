@@ -17,17 +17,8 @@ pip install --upgrade pip
 Then install Flask and the other dependencies
 
 ```
-pip install llama-index
-pip install flask
-pip install flask_cors
-pip install transformers
-pip install torch
-pip install pypdf
+pip install flask flask_cors
 ```
-Don't forget to install Ollama and launch it
-
-https://github.com/ollama/ollama
-
 
 Then run the app
 ```

@@ -3,25 +3,12 @@
 
 from flask import Flask, request, redirect
 from flask_cors import CORS
-from llama_index.llms import Ollama
-from llama_index import VectorStoreIndex, SimpleDirectoryReader, ServiceContext
+
 import json
 
 #os.environ['OPENAI_API_KEY'] = open(".openai").read().strip()
 
 # Setup llamaindex here
-
-llm = Ollama(model="mistral")
-service_context = ServiceContext.from_defaults(llm=llm,embed_model="local")
-
-
-documents = SimpleDirectoryReader("docs").load_data()
-index = VectorStoreIndex.from_documents(
-    documents, service_context=service_context
-)
-
-#query_engine = index.as_query_engine()
-chat_engine = index.as_chat_engine(chat_mode="condense_plus_context", verbose=False)
 
 
 
@@ -41,18 +28,13 @@ def chat():
     return redirect("/static/chat/index.html", code=302)
 
 
-@app.route('/ask')
-def ask():
-    question = request.args.get('q')
-    #completion = query_engine.query(question)
-    completion = chat_engine.chat(question);
-    return f"{question} ,  {completion}"
+
 
 @app.route('/postQuestion',  methods=['POST'])
 def postQuestion():
     question = request.form['q']
     #completion = query_engine.query(question)
-    completion = chat_engine.chat(question)
+    completion = "Ok, got it, this is you question:" + question
     return f"{completion}"
 
 # route with openAI syntax
@@ -64,7 +46,7 @@ def completions():
     print(question)
 
     #answer = query_engine.query(question)
-    answer = chat_engine.chat(question)
+    answer = "Ok, got it, this is you question: " + question
     print("** ANSWER **")
     print(answer)
 
