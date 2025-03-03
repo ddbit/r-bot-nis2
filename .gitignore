@@ -3,3 +3,5 @@ doc/*
 .flaskenv/*
 telegram-bot/.secret
 telegram-bot/.tgbot/*
+openai_key 
+

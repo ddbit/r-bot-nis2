@@ -17,7 +17,7 @@ pip install --upgrade pip
 Then install Flask and the other dependencies
 
 ```
-pip install flask flask_cors
+pip install flask flask_cors openai
 ```
 
 Then run the app
