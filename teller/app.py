@@ -5,6 +5,7 @@ from flask import Flask, request, redirect
 from flask_cors import CORS
 
 import json
+import helpers
 
 #os.environ['OPENAI_API_KEY'] = open(".openai").read().strip()
 
@@ -30,56 +31,29 @@ def chat():
 
 
 
-@app.route('/postQuestion',  methods=['POST'])
-def postQuestion():
+@app.route('/sendMessage',  methods=['POST'])
+def sendMessageToAssistant():
     question = request.form['q']
-    #completion = query_engine.query(question)
-    completion = "Ok, got it, this is you question:" + question
-    return f"{completion}"
+    print('question', question)
 
-# route with openAI syntax
-@app.route('/v1/chat/completions',  methods=['POST'])
-def completions():
-    payload = request.json
-    #print(f"payload: {payload}")
-    question = payload["messages"][0]["content"]
-    print(question)
-
-    #answer = query_engine.query(question)
-    answer = "Ok, got it, this is you question: " + question
-    print("** ANSWER **")
-    print(answer)
-
-    # Creazione del JSON
-    data = {
-        "choices": [
-            {
-                "index": 0,
-                "message": {
-                    "role": "assistant",
-                    "content": str(answer)
-                }
-            }
-        ]
-    }
+    if 'thread_id' in request.form:
+        thread_id = request.form['thread_id']
+    else:
+        thread_id = helpers.create_a_thread()
+    print('thread_id', thread_id)
 
 
-    return json.dumps(data)
 
-"""
-{
-  "model": "gpt-3.5-turbo",
-  "messages": [
-    {
-      "role": "user",
-      "content": "ciao"
-    }
-  ],
-  "max_tokens": 2048,
-  "temperature": 0.2,
-  "n": 1,
-  "stop": null
-}
+    run_id = helpers.send_message(question, thread_id)
+    return {'status': 'success', 'run_id': run_id, 'thread_id': thread_id}
 
-response.choices[0].message.content.trim();
-"""
+
+@app.route('/checkRun',  methods=['GET'])
+def checkRunStatus():
+    run_id = request.args.get('run_id')
+    thread_id = request.args.get('thread_id')
+    print('run_id', run_id)
+    print('thread_id', thread_id)
+    run_status = helpers.check_run(run_id, thread_id)
+    return {'status': 'success', 'run_id': run_id, 'thread_id': thread_id, 'run_status': run_status}
+
